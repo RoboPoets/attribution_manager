@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://duunfdxmfe5m1"]
+[gd_scene load_steps=5 format=3 uid="uid://duunfdxmfe5m1"]
 
 [ext_resource type="Script" path="res://addons/attribution_manager/editor/ui/credits_info.gd" id="1_wgy7t"]
 [ext_resource type="Texture2D" uid="uid://cptcj2tc5178x" path="res://addons/attribution_manager/editor/icons/copyright.svg" id="2_jtmh1"]
+[ext_resource type="Texture2D" uid="uid://bk6h7ikbi6kj0" path="res://addons/attribution_manager/editor/icons/add.svg" id="3_t5xma"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kquia"]
 bg_color = Color(0.262745, 0.262745, 0.309804, 1)
@@ -52,5 +53,12 @@ size_flags_horizontal = 3
 
 [node name="Properties" type="VBoxContainer" parent="."]
 layout_mode = 2
+
+[node name="Button" type="Button" parent="."]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Add License"
+icon = ExtResource("3_t5xma")
 
 [connection signal="item_selected" from="HBoxContainer/ClassListButton" to="." method="_on_attribution_class_selected"]
