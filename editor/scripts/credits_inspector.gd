@@ -34,13 +34,11 @@ func _on_editor_settings_changed() -> void:
 # Doing this work here, once, has the benefit of not blocking the UI for
 # a noticeable time as it was in a previous implementation.
 func _setup_inspector_theme() -> void:
-	inspector_theme = Theme.new()
-	inspector_theme.set_type_variation("CategoryHead", "PanelContainer")
-
 	var t := EditorInterface.get_editor_theme()
+	inspector_theme = Theme.new()
+	inspector_theme.merge_with(t)
+
 	var cat_style := t.get_stylebox("bg", "EditorInspectorCategory")
 	cat_style.set_content_margin_all(0)
+	inspector_theme.set_type_variation("CategoryHead", "PanelContainer")
 	inspector_theme.set_stylebox("panel", "CategoryHead", cat_style)
-
-	var btn_style := t.get_stylebox("normal", "Button")
-	inspector_theme.set_stylebox("normal", "Button", btn_style)

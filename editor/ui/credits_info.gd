@@ -16,6 +16,8 @@ func _notification(what:int) -> void:
 
 
 func refresh_info(object:Object) -> void:
+	$AddButton.icon = get_theme_icon("Add", "EditorIcons")
+	$CategoryPanel/HBoxContainer/Icon.modulate = get_theme_color("font_color", "Label")
 	%ClassListButton.add_item("None")
 	%ClassListButton.selected = 0
 
