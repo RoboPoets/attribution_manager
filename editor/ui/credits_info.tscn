@@ -31,20 +31,7 @@ theme_type_variation = &"HeaderSmall"
 text = "Attribution"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "License"
-
-[node name="ClassListButton" type="OptionButton" parent="HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Properties" type="VBoxContainer" parent="."]
+[node name="Licenses" type="VBoxContainer" parent="."]
 layout_mode = 2
 
 [node name="AddButton" type="Button" parent="."]
@@ -53,4 +40,4 @@ size_flags_horizontal = 4
 theme_type_variation = &"InspectorActionButton"
 text = "Add License"
 
-[connection signal="item_selected" from="HBoxContainer/ClassListButton" to="." method="_on_attribution_class_selected"]
+[connection signal="pressed" from="AddButton" to="." method="_on_add_button_pressed"]
