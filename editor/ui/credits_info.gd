@@ -5,10 +5,6 @@ extends Control
 var _license_classes:Array[Dictionary] = []
 
 
-func _enter_tree():
-	_setup_editor_theme()
-
-
 # We use this to guard against cases where the scene for this UI element is
 # open and we're using its functionality on resources at the same time. This
 # would cause changes to the options button to persist, which is not at all
@@ -62,17 +58,3 @@ func _clear_license_inspector() -> void:
 		var node := $Properties.get_child(i)
 		$Properties.remove_child(node)
 		node.queue_free()
-
-
-# Call this to apply the current editor theme to our custom controls.
-# This insures consistent theming for every user.
-#
-# TODO: This is pretty slow even for just a few items. We should look into
-#       other ways to do this that involves some caching or doing the work
-#       up front.
-func _setup_editor_theme() -> void:
-	var t := EditorInterface.get_editor_theme()
-
-	var category_style := t.get_stylebox("bg", "EditorInspectorCategory")
-	category_style.set_content_margin_all(0)
-	$CategoryPanel.add_theme_stylebox_override("panel", category_style)

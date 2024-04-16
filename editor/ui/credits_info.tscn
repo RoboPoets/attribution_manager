@@ -1,22 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://duunfdxmfe5m1"]
+[gd_scene load_steps=4 format=3 uid="uid://duunfdxmfe5m1"]
 
 [ext_resource type="Script" path="res://addons/attribution_manager/editor/ui/credits_info.gd" id="1_wgy7t"]
 [ext_resource type="Texture2D" uid="uid://cptcj2tc5178x" path="res://addons/attribution_manager/editor/icons/copyright.svg" id="2_jtmh1"]
 [ext_resource type="Texture2D" uid="uid://bk6h7ikbi6kj0" path="res://addons/attribution_manager/editor/icons/add.svg" id="3_t5xma"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ey8on"]
-content_margin_left = 0.0
-content_margin_top = 0.0
-content_margin_right = 0.0
-content_margin_bottom = 0.0
-bg_color = Color(0.26784, 0.28016, 0.29248, 1)
-border_color = Color(0.26784, 0.28016, 0.29248, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 3
-anti_aliasing = false
 
 [node name="CreditsInfo" type="VBoxContainer"]
 anchors_preset = 15
@@ -28,7 +14,7 @@ script = ExtResource("1_wgy7t")
 
 [node name="CategoryPanel" type="PanelContainer" parent="."]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_ey8on")
+theme_type_variation = &"CategoryHead"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CategoryPanel"]
 layout_mode = 2
