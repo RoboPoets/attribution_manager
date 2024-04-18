@@ -9,7 +9,12 @@ func _init():
 
 
 func _can_handle(object:Object) -> bool:
-	return object is Resource
+	if not object is Resource:
+		return false
+
+	var res := object as Resource
+	var uid := ResourceLoader.get_resource_uid(res.resource_path)
+	return uid != -1
 
 
 func _parse_end(object:Object) -> void:
