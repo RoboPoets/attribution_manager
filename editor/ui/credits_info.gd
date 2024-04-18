@@ -2,8 +2,6 @@
 extends Control
 
 
-@export var license_info:PackedScene = preload("uid://cs5uset63g8ea")
-
 var _license_classes:Array[Dictionary] = []
 
 
