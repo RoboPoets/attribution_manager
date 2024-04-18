@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://cs5uset63g8ea"]
+[gd_scene load_steps=4 format=3 uid="uid://cs5uset63g8ea"]
 
 [ext_resource type="Script" path="res://addons/attribution_manager/editor/ui/license_info.gd" id="1_rgph8"]
+[ext_resource type="Texture2D" uid="uid://b7s8vi7axsyer" path="res://addons/attribution_manager/editor/icons/remove.svg" id="2_mm520"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cjegr"]
 
@@ -43,6 +44,7 @@ theme_override_styles/separator = SubResource("StyleBoxEmpty_cjegr")
 [node name="DeleteButton" type="Button" parent="."]
 layout_mode = 2
 size_flags_vertical = 0
+icon = ExtResource("2_mm520")
 flat = true
 
 [connection signal="item_selected" from="VBoxContainer/HBoxContainer/ClassListButton" to="." method="_on_attribution_class_selected"]

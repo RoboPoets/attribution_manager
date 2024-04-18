@@ -6,8 +6,10 @@ var _license_classes:Array[Dictionary] = []
 
 
 func refresh_info(object:Object) -> void:
-	$AddButton.icon = get_theme_icon("Add", "EditorIcons")
-	$CategoryPanel/HBoxContainer/Icon.modulate = get_theme_color("font_color", "Label")
+	if has_theme_icon("Add", "EditorIcons"):
+		$AddButton.icon = get_theme_icon("Add", "EditorIcons")
+	if has_theme_color("font_color", "Label"):
+		$CategoryPanel/HBoxContainer/Icon.modulate = get_theme_color("font_color", "Label")
 
 	for c in ProjectSettings.get_global_class_list():
 		if c.base != "LicenseBase":

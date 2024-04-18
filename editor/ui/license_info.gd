@@ -19,7 +19,8 @@ func _on_delete_button_pressed() -> void:
 
 
 func apply_theme() -> void:
-	$DeleteButton.icon = get_theme_icon("Remove", "EditorIcons")
+	if has_theme_icon("Remove", "EditorIcons"):
+		$DeleteButton.icon = get_theme_icon("Remove", "EditorIcons")
 
 
 func set_licenses(licenses:Array[Dictionary]) -> void:
