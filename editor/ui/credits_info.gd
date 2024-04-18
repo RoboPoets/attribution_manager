@@ -18,6 +18,7 @@ func refresh_info(object:Object) -> void:
 
 
 func _on_add_button_pressed():
-	var info := license_info.instantiate()
-	info.set_licenses(_license_classes)
+	var info := preload("./license_info.tscn").instantiate()
 	$Licenses.add_child(info)
+	info.set_licenses(_license_classes)
+	info.apply_theme()
