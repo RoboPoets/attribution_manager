@@ -8,9 +8,9 @@ var _licenses:Array[Dictionary] = []
 func _on_attribution_class_selected(index:int) -> void:
 	_clear_license_inspector()
 	var selection = %ClassListButton.get_item_text(index)
-	for c in _licenses:
-		if c.class == selection:
-			_build_license_inspector(c.path)
+	for l in _licenses:
+		if l.class == selection:
+			_build_license_inspector(l.path)
 			break
 
 
@@ -25,8 +25,27 @@ func apply_theme() -> void:
 
 func set_licenses(licenses:Array[Dictionary]) -> void:
 	_licenses = licenses
-	for c in _licenses:
-		%ClassListButton.add_item(c.class)
+	for l in _licenses:
+		%ClassListButton.add_item(l.class)
+
+
+func get_license() -> LicenseBase:
+	var selection = %ClassListButton.get_item_text(%ClassListButton.selected)
+
+	var license:LicenseBase = null
+	for l in _licenses:
+		if l.class == selection:
+			license = load(l.path).new()
+			break
+
+	if not license:
+		return null
+
+	for c in %Properties.get_children():
+		license.set(c.property,c.get_value())
+		pass
+
+	return license
 
 
 func _build_license_inspector(class_path:String) -> void:
@@ -34,6 +53,8 @@ func _build_license_inspector(class_path:String) -> void:
 	var item_scene:PackedScene = preload("./license_item.tscn")
 	for prop in license.get_property_list():
 		if prop.usage != 4102:
+			continue
+		if prop.name == "resource_id":
 			continue
 		var item = item_scene.instantiate()
 		item.set_property(prop)

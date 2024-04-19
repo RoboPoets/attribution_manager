@@ -5,6 +5,8 @@ class_name LicenseBase extends Resource
 @export var asset_url:String = ""
 @export var author:String = ""
 
+@export var resource_id:String = ""
+
 
 ## Override this to set the name of the license as it's commonly used by people.
 func get_license_name() -> String:
