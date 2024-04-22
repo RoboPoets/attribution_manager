@@ -25,23 +25,21 @@ func _on_save_button_pressed() -> void:
 	if not credits:
 		return
 
+	var uid_num := ResourceLoader.get_resource_uid(_object.resource_path)
+	var uid_str := ResourceUID.id_to_text(uid_num)
+
 	var licenses:Array[LicenseBase]
 	for c in $Licenses.get_children():
 		var license:LicenseBase = c.get_license()
 		if not license:
 			continue
-
-		var uid := ResourceLoader.get_resource_uid(_object.resource_path)
-		license.resource_id = ResourceUID.id_to_text(uid)
+		license.resource_id = uid_str
 		licenses.append(license)
 
 	var count := credits.attributions.size()
 	for i in range(count - 1, -1, -1):
-		for l in licenses:
-			if credits.attributions[i].resource_id == l.resource_id:
-				credits.attributions.remove_at(i)
-				if credits.attributions.size() == 0:
-					break
+		if credits.attributions[i].resource_id == uid_str:
+			credits.attributions.remove_at(i)
 
 	credits.attributions.append_array(licenses)
 	ResourceSaver.save(credits)
