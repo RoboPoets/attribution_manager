@@ -12,3 +12,7 @@ func set_property(prop:Dictionary) -> void:
 
 func get_value() -> String:
 	return $LineEdit.text
+
+
+func set_value(val:String) -> void:
+	$LineEdit.text = val

@@ -2,6 +2,8 @@
 extends Control
 
 
+const LicenseItem = preload("./license_item.tscn")
+
 var _licenses:Array[Dictionary] = []
 
 
@@ -48,15 +50,41 @@ func get_license() -> LicenseBase:
 	return license
 
 
-func _build_license_inspector(class_path:String) -> void:
-	var license:LicenseBase = load(class_path).new()
-	var item_scene:PackedScene = preload("./license_item.tscn")
+func set_license(license:LicenseBase) -> void:
+	# TODO: this is inconvenient and ugly. Improve it as soon
+	# as https://github.com/godotengine/godot/pull/80487 makes
+	# it into a stable release.
+	var script_path:String = license.get_script().resource_path
+	var license_name:String = ""
+	for l in _licenses:
+		if l.path == script_path:
+			license_name = l.class
+			break
+
+	for i in %ClassListButton.item_count:
+		if %ClassListButton.get_item_text(i) == license_name:
+			%ClassListButton.select(i)
+			break
+
 	for prop in license.get_property_list():
 		if prop.usage != 4102:
 			continue
 		if prop.name == "resource_id":
 			continue
-		var item = item_scene.instantiate()
+		var item = LicenseItem.instantiate()
+		item.set_property(prop)
+		item.set_value(license.get(prop.name))
+		%Properties.add_child(item)
+
+
+func _build_license_inspector(class_path:String) -> void:
+	var license:LicenseBase = load(class_path).new()
+	for prop in license.get_property_list():
+		if prop.usage != 4102:
+			continue
+		if prop.name == "resource_id":
+			continue
+		var item = LicenseItem.instantiate()
 		item.set_property(prop)
 		%Properties.add_child(item)
 
