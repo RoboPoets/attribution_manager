@@ -13,6 +13,10 @@ func _can_handle(object:Object) -> bool:
 		return false
 
 	var res := object as Resource
+	var ext := res.resource_path.get_extension()
+	if ext in ["tres", "res"]:
+		return false
+
 	var uid := ResourceLoader.get_resource_uid(res.resource_path)
 	return uid != -1
 
