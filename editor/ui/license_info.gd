@@ -7,10 +7,23 @@ const LicenseItem = preload("./license_item.tscn")
 var _licenses:Array[Dictionary] = []
 
 
-func _on_attribution_class_selected(index:int) -> void:
+func _enter_tree():
+	# Don't change any properties or node contents when
+	# this scene is opened for editing in the editor.
+	if get_viewport() is SubViewport:
+		return
+
+	if _licenses.size() == 0:
+		_get_licenses()
+
+	if has_theme_icon("Remove", "EditorIcons"):
+		$DeleteButton.icon = get_theme_icon("Remove", "EditorIcons")
+
+
+func _on_license_class_selected(index:int) -> void:
 	_clear_license_inspector()
 	var selection = %ClassListButton.get_item_text(index)
-	for l in _licenses:
+	for l in _get_licenses():
 		if l.class == selection:
 			_build_license_inspector(l.path)
 			break
@@ -20,22 +33,11 @@ func _on_delete_button_pressed() -> void:
 	queue_free()
 
 
-func apply_theme() -> void:
-	if has_theme_icon("Remove", "EditorIcons"):
-		$DeleteButton.icon = get_theme_icon("Remove", "EditorIcons")
-
-
-func set_licenses(licenses:Array[Dictionary]) -> void:
-	_licenses = licenses
-	for l in _licenses:
-		%ClassListButton.add_item(l.class)
-
-
 func get_license() -> LicenseBase:
 	var selection = %ClassListButton.get_item_text(%ClassListButton.selected)
 
 	var license:LicenseBase = null
-	for l in _licenses:
+	for l in _get_licenses():
 		if l.class == selection:
 			license = load(l.path).new()
 			break
@@ -44,7 +46,7 @@ func get_license() -> LicenseBase:
 		return null
 
 	for c in %Properties.get_children():
-		license.set(c.property,c.get_value())
+		license.set(c.get_property(),c.get_value())
 		pass
 
 	return license
@@ -56,7 +58,7 @@ func set_license(license:LicenseBase) -> void:
 	# it into a stable release.
 	var script_path:String = license.get_script().resource_path
 	var license_name:String = ""
-	for l in _licenses:
+	for l in _get_licenses():
 		if l.path == script_path:
 			license_name = l.class
 			break
@@ -67,12 +69,10 @@ func set_license(license:LicenseBase) -> void:
 			break
 
 	for prop in license.get_property_list():
-		if prop.usage != 4102:
-			continue
-		if prop.name == "resource_id":
+		if not _should_show_in_inspector(prop):
 			continue
 		var item = LicenseItem.instantiate()
-		item.set_property(prop)
+		item.set_property(prop.name)
 		item.set_value(license.get(prop.name))
 		%Properties.add_child(item)
 
@@ -80,12 +80,10 @@ func set_license(license:LicenseBase) -> void:
 func _build_license_inspector(class_path:String) -> void:
 	var license:LicenseBase = load(class_path).new()
 	for prop in license.get_property_list():
-		if prop.usage != 4102:
-			continue
-		if prop.name == "resource_id":
+		if not _should_show_in_inspector(prop):
 			continue
 		var item = LicenseItem.instantiate()
-		item.set_property(prop)
+		item.set_property(prop.name)
 		%Properties.add_child(item)
 
 
@@ -93,5 +91,20 @@ func _clear_license_inspector() -> void:
 	var count := %Properties.get_child_count()
 	for i in range(count - 1, -1, -1):
 		var node := %Properties.get_child(i)
-		%Properties.remove_child(node)
 		node.queue_free()
+
+
+func _should_show_in_inspector(property:Dictionary) -> bool:
+	if property.usage != 4102:
+		return false
+	if property.name == "resource_id":
+		return false
+	return true
+
+
+func _get_licenses() -> Array[Dictionary]:
+	if _licenses.size() == 0:
+		_licenses = AttributionManager.get_known_licenses()
+		for l in _licenses:
+			%ClassListButton.add_item(l.class)
+	return _licenses

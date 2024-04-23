@@ -8,8 +8,6 @@ var inspector_theme:Theme = null
 
 func _init():
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_editor_settings_changed)
-	EditorInterface.get_file_system_dock().file_removed.connect(_on_file_removed)
-	EditorInterface.get_file_system_dock().folder_removed.connect(_on_folder_removed)
 
 
 func _can_handle(object:Object) -> bool:
@@ -34,7 +32,7 @@ func _parse_end(object:Object) -> void:
 	# or storing a reference and instead just create a new one everytime.
 	var credits_info := preload("../ui/credits_info.tscn").instantiate()
 	credits_info.theme = inspector_theme
-	credits_info.refresh_info(object)
+	credits_info.set_object(object)
 	add_custom_control(credits_info)
 
 
@@ -42,51 +40,6 @@ func _parse_end(object:Object) -> void:
 # was changed the changes are picked up on the next time an object is selected.
 func _on_editor_settings_changed() -> void:
 	inspector_theme = null
-
-
-# Remove all attributions from the credits resource that match the uid of
-# the recently deleted file. Files of internal resources are ignored here.
-func _on_file_removed(file:String) -> void:
-	var uid_num := ResourceLoader.get_resource_uid(file)
-	if uid_num == ResourceUID.INVALID_ID:
-		return
-
-	var credits_path := ProjectSettings.get_setting(Settings.key_credits, "")
-	var credits:Credits = load(credits_path)
-	if not credits:
-		return
-
-	var uid_str := ResourceUID.id_to_text(uid_num)
-	var count := credits.attributions.size()
-	for i in range(count - 1, -1, -1):
-		if credits.attributions[i].resource_id == uid_str:
-			credits.attributions.remove_at(i)
-
-	ResourceSaver.save(credits)
-
-
-# Remove all attributions from the credits resource that match the uids of
-# all files in the recently deleted folder.
-func _on_folder_removed(folder:String) -> void:
-	# We don't get a list of individual files, so we have to
-	# clean up the credits resource from start to finish.
-	clean_attributions()
-
-
-# Iterates over all existing attributions in the credits resource and removes
-# the ones it can't find a related asset for.
-func clean_attributions() -> void:
-	var credits_path := ProjectSettings.get_setting(Settings.key_credits, "")
-	var credits:Credits = load(credits_path)
-	if not credits:
-		return
-
-	var count := credits.attributions.size()
-	for i in range(count - 1, -1, -1):
-		if not ResourceLoader.exists(credits.attributions[i].resource_id):
-			credits.attributions.remove_at(i)
-
-	ResourceSaver.save(credits)
 
 
 # Doing this work here, once, has the benefit of not blocking the UI for

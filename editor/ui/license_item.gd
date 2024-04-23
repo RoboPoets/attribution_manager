@@ -2,12 +2,16 @@
 extends Control
 
 
-var property:String = ""
+var _property:String = ""
 
 
-func set_property(prop:Dictionary) -> void:
-	property = prop.name
-	$Label.text = prop.name.capitalize()
+func get_property() -> String:
+	return _property
+
+
+func set_property(prop:String) -> void:
+	_property = prop
+	$Label.text = prop.capitalize()
 
 
 func get_value() -> String:
