@@ -1,11 +1,14 @@
 extends EditorInspectorPlugin
 
 
+const Settings = preload("../../settings.gd")
+
 var inspector_theme:Theme = null
 
 
 func _init():
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_editor_settings_changed)
+	EditorInterface.get_file_system_dock().file_removed.connect(_on_file_removed)
 
 
 func _can_handle(object:Object) -> bool:
@@ -38,6 +41,27 @@ func _parse_end(object:Object) -> void:
 # was changed the changes are picked up on the next time an object is selected.
 func _on_editor_settings_changed() -> void:
 	inspector_theme = null
+
+
+# Remove all attributions from the credits resource that match the uid of
+# the recently deleted file. Files of internal resources are ignored here.
+func _on_file_removed(file:String) -> void:
+	var uid_num := ResourceLoader.get_resource_uid(file)
+	if uid_num == ResourceUID.INVALID_ID:
+		return
+
+	var credits_path := ProjectSettings.get_setting(Settings.key_credits, "")
+	var credits:Credits = load(credits_path)
+	if not credits:
+		return
+
+	var uid_str := ResourceUID.id_to_text(uid_num)
+	var count := credits.attributions.size()
+	for i in range(count - 1, -1, -1):
+		if credits.attributions[i].resource_id == uid_str:
+			credits.attributions.remove_at(i)
+
+	ResourceSaver.save(credits)
 
 
 # Doing this work here, once, has the benefit of not blocking the UI for
