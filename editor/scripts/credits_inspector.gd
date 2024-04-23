@@ -9,6 +9,7 @@ var inspector_theme:Theme = null
 func _init():
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_editor_settings_changed)
 	EditorInterface.get_file_system_dock().file_removed.connect(_on_file_removed)
+	EditorInterface.get_file_system_dock().folder_removed.connect(_on_folder_removed)
 
 
 func _can_handle(object:Object) -> bool:
@@ -59,6 +60,30 @@ func _on_file_removed(file:String) -> void:
 	var count := credits.attributions.size()
 	for i in range(count - 1, -1, -1):
 		if credits.attributions[i].resource_id == uid_str:
+			credits.attributions.remove_at(i)
+
+	ResourceSaver.save(credits)
+
+
+# Remove all attributions from the credits resource that match the uids of
+# all files in the recently deleted folder.
+func _on_folder_removed(folder:String) -> void:
+	# We don't get a list of individual files, so we have to
+	# clean up the credits resource from start to finish.
+	clean_attributions()
+
+
+# Iterates over all existing attributions in the credits resource and removes
+# the ones it can't find a related asset for.
+func clean_attributions() -> void:
+	var credits_path := ProjectSettings.get_setting(Settings.key_credits, "")
+	var credits:Credits = load(credits_path)
+	if not credits:
+		return
+
+	var count := credits.attributions.size()
+	for i in range(count - 1, -1, -1):
+		if not ResourceLoader.exists(credits.attributions[i].resource_id):
 			credits.attributions.remove_at(i)
 
 	ResourceSaver.save(credits)
