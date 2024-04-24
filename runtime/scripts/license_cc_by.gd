@@ -15,7 +15,7 @@ func get_asset_url() -> String:
 
 
 func get_license_name() -> String:
-	return "CC-BY"
+	return "CC BY"
 
 
 func get_license_url() -> String:
