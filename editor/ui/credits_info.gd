@@ -2,7 +2,6 @@
 extends Control
 
 
-const Settings = preload("../../settings.gd")
 const LicenseInfo = preload("./license_info.tscn")
 
 var _object:Resource = null
@@ -31,11 +30,6 @@ func _on_save_button_pressed() -> void:
 	if not _object:
 		return
 
-	var credits_path := ProjectSettings.get_setting(Settings.key_credits, "")
-	var credits:Credits = load(credits_path)
-	if not credits:
-		return
-
 	var uid_num := ResourceLoader.get_resource_uid(_object.resource_path)
 	var uid_str := ResourceUID.id_to_text(uid_num)
 
@@ -47,13 +41,7 @@ func _on_save_button_pressed() -> void:
 		license.resource_id = uid_str
 		licenses.append(license)
 
-	var count := credits.attributions.size()
-	for i in range(count - 1, -1, -1):
-		if credits.attributions[i].resource_id == uid_str:
-			credits.attributions.remove_at(i)
-
-	credits.attributions.append_array(licenses)
-	ResourceSaver.save(credits)
+	AttributionManager.replace_attributions(licenses)
 
 
 func set_object(object:Object) -> void:

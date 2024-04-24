@@ -63,12 +63,38 @@ func clean_attributions() -> void:
 	ResourceSaver.save(credits)
 
 
-func get_known_licenses():
-	var classes:Array[Dictionary] = []
-	for c in ProjectSettings.get_global_class_list():
-		if c.base == "LicenseBase":
-			classes.append(c)
-	return classes
+# Adds all licenses to the list of attributions in the credits resource
+# without checking for duplicates or removing any other attribution.
+func add_attributions(licenses:Array[LicenseBase]) -> void:
+	var credits_path := ProjectSettings.get_setting(Settings.key_credits, "")
+	var credits:Credits = load(credits_path)
+	if not credits:
+		return
+
+	credits.attributions.append_array(licenses)
+	ResourceSaver.save(credits)
+
+
+# Removes any attribution in the credits resource that matches any uid found
+# in this list of licenses and replaces them with these new ones.
+func replace_attributions(licenses:Array[LicenseBase]) -> void:
+	var credits_path := ProjectSettings.get_setting(Settings.key_credits, "")
+	var credits:Credits = load(credits_path)
+	if not credits:
+		return
+
+	var uids:Array[String] = []
+	for l in licenses:
+		if not l.resource_id in uids:
+			uids.append(l.resource_id)
+
+	var count := credits.attributions.size()
+	for i in range(count - 1, -1, -1):
+		if credits.attributions[i].resource_id in uids:
+			credits.attributions.remove_at(i)
+
+	credits.attributions.append_array(licenses)
+	ResourceSaver.save(credits)
 
 
 func get_attributions(uid:String) -> Array[LicenseBase]:
@@ -83,3 +109,11 @@ func get_attributions(uid:String) -> Array[LicenseBase]:
 			licenses.append(license)
 
 	return licenses
+
+
+func get_known_licenses():
+	var classes:Array[Dictionary] = []
+	for c in ProjectSettings.get_global_class_list():
+		if c.base == "LicenseBase":
+			classes.append(c)
+	return classes

@@ -1,8 +1,6 @@
 extends EditorInspectorPlugin
 
 
-const Settings = preload("../../settings.gd")
-
 var inspector_theme:Theme = null
 
 
