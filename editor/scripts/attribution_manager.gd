@@ -131,9 +131,22 @@ func get_attributions(uid:String) -> Array[LicenseBase]:
 	return licenses
 
 
-func get_known_licenses():
+func get_known_licenses() -> Array[Dictionary]:
 	var classes:Array[Dictionary] = []
 	for c in ProjectSettings.get_global_class_list():
 		if c.base == "LicenseBase":
 			classes.append(c)
 	return classes
+
+
+func get_known_roles() -> Array[String]:
+	var credits_path := ProjectSettings.get_setting(Settings.key_credits, "")
+	var credits:Credits = load(credits_path)
+	if not credits:
+		return []
+
+	var roles:Array[String]
+	for c in credits.credits:
+		roles.append(c.role)
+
+	return roles
