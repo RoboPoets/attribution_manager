@@ -29,3 +29,14 @@ stores around the internet. The attributions are stored automatically in the cre
 resource and update when attributions for an asset are changed or the asset is deleted.
 
 ![attribution](docs/screenshot2.png)
+
+There is a special license type, `LicenseProject`, that you can use to handle attributions
+for work done by members of the project and freelancers. These attributions are not stored
+in the list of external attributions and the names of the contributors are automatically
+added to the main credits array into the associated `Role` list.
+
+> **Note:** When you remove an asset or an attribution from an asset, the project member
+> is not automatically removed from the credits list. You will have to do that manually.
+> Whether or not you *should* is up to you. When in doubt, refer to the 
+> [IDGA Crediting Guide](https://igda.org/wp-content/uploads/2021/11/IGDA-Game-Crediting-Guidelines-10.1-March-2023.pdf)
+> for some considerations on good business practices.
