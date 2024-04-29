@@ -20,7 +20,7 @@ func _on_file_removed(file:String) -> void:
 		return
 
 	var uid_str := ResourceUID.id_to_text(uid_num)
-	remove_attribution(uid_str)
+	remove_attributions([uid_str])
 
 
 # Handle the removal of all attributions from the credits resource that match
@@ -32,9 +32,9 @@ func _on_folder_removed(folder:String) -> void:
 
 
 # Remove all attributions from the credits resource that match the
-# provided resource uid. Attributions to project members are removed,
+# provided resource uids. Attributions to project members are removed,
 # but their mention in the Credits section remains.
-func remove_attribution(uid:String) -> void:
+func remove_attributions(uids:Array[String]) -> void:
 	var credits_path := ProjectSettings.get_setting(Settings.key_credits, "")
 	var credits:Credits = load(credits_path)
 	if not credits:
@@ -42,12 +42,12 @@ func remove_attribution(uid:String) -> void:
 
 	var count := credits.attributions.size()
 	for i in range(count - 1, -1, -1):
-		if credits.attributions[i].resource_id == uid:
+		if credits.attributions[i].resource_id in uids:
 			credits.attributions.remove_at(i)
 
 	count = credits.members.size()
 	for i in range(count - 1, -1, -1):
-		if credits.members[i].resource_id == uid:
+		if credits.members[i].resource_id in uids:
 			credits.members.remove_at(i)
 
 	ResourceSaver.save(credits)
@@ -94,10 +94,9 @@ func add_attributions(licenses:Array[LicenseBase]) -> void:
 			if c.role != l.role:
 				continue
 			if not l.author in c.contributors:
-				var arr:Array[String]
-				arr.assign(c.contributors)
-				arr.append(l.author)
-				c.contributors = arr
+				# The contributors array is read-only (not sure if
+				# bug or intended), so we have to do a copy here.
+				c.contributors = c.contributors + [l.author]
 			break
 
 	ResourceSaver.save(credits)
@@ -106,44 +105,13 @@ func add_attributions(licenses:Array[LicenseBase]) -> void:
 # Removes any attribution in the credits resource that matches any uid found
 # in this list of licenses and replaces them with these new ones.
 func replace_attributions(licenses:Array[LicenseBase]) -> void:
-	var credits_path := ProjectSettings.get_setting(Settings.key_credits, "")
-	var credits:Credits = load(credits_path)
-	if not credits:
-		return
-
 	var uids:Array[String] = []
 	for l in licenses:
 		if not l.resource_id in uids:
 			uids.append(l.resource_id)
 
-	var count := credits.attributions.size()
-	for i in range(count - 1, -1, -1):
-		if credits.attributions[i].resource_id in uids:
-			credits.attributions.remove_at(i)
-
-	count = credits.members.size()
-	for i in range(count - 1, -1, -1):
-		if credits.members[i].resource_id in uids:
-			credits.members.remove_at(i)
-
-	var external:Array[LicenseBase] = licenses.filter(func(l): return not l is LicenseProject)
-	var internal:Array[LicenseBase] = licenses.filter(func(l): return l is LicenseProject)
-
-	credits.attributions.append_array(external)
-	credits.members.append_array(internal)
-
-	for l:LicenseProject in internal:
-		for c in credits.credits:
-			if c.role != l.role:
-				continue
-			if not l.author in c.contributors:
-				var arr:Array[String]
-				arr.assign(c.contributors)
-				arr.append(l.author)
-				c.contributors = arr
-			break
-
-	ResourceSaver.save(credits)
+	remove_attributions(uids)
+	add_attributions(licenses)
 
 
 func get_attributions(uid:String) -> Array[LicenseBase]:
