@@ -15,6 +15,8 @@ request attached, and there is a need to identify the person responsible. This m
 sound overly corporate-y, but FOSS and CC licenses can only thrive if licensors have
 the ability to enforce them.
 
+## Using Roles to Group Credits
+
 Credits can be collected manually and automatically. They're stored in a single
 resource that can be hooked up easily to any kind of credits scene. Credits for the
 various roles in game development can be entered directly and with as many contributors
@@ -23,6 +25,8 @@ entire asset stores.
 
 ![credits](docs/screenshot1.png)
 
+## Crediting External Assets
+
 Attributions for imported resources are entered in the inspector. There are pre-made
 attribution types for the most common CC-style licenses found on the various asset
 stores around the internet. The attributions are stored automatically in the credits
@@ -30,10 +34,14 @@ resource and update when attributions for an asset are changed or the asset is d
 
 ![attribution](docs/screenshot2.png)
 
+## Crediting Project Members
+
 There is a special license type, `LicenseProject`, that you can use to handle attributions
 for work done by members of the project and freelancers. These attributions are not stored
 in the list of external attributions and the names of the contributors are automatically
 added to the main credits array into the associated `Role` list.
+
+![attribution](docs/screenshot3.png)
 
 > **Note:** When you remove an asset or an attribution from an asset, the project member
 > is not automatically removed from the credits list. You will have to do that manually.
