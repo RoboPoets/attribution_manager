@@ -32,7 +32,8 @@ func _on_folder_removed(folder:String) -> void:
 
 
 # Remove all attributions from the credits resource that match the
-# provided resource uid.
+# provided resource uid. Attributions to project members are removed,
+# but their mention in the Credits section remains.
 func remove_attribution(uid:String) -> void:
 	var credits_path := ProjectSettings.get_setting(Settings.key_credits, "")
 	var credits:Credits = load(credits_path)
@@ -44,11 +45,17 @@ func remove_attribution(uid:String) -> void:
 		if credits.attributions[i].resource_id == uid:
 			credits.attributions.remove_at(i)
 
+	count = credits.members.size()
+	for i in range(count - 1, -1, -1):
+		if credits.members[i].resource_id == uid:
+			credits.members.remove_at(i)
+
 	ResourceSaver.save(credits)
 
 
 # Iterate over all existing attributions in the credits resource and removes
-# the ones it can't find a related asset for.
+# the ones it can't find a related asset for. Project member attributions
+# are removed also, but their mention in the Credits section remains.
 func clean_attributions() -> void:
 	var credits_path := ProjectSettings.get_setting(Settings.key_credits, "")
 	var credits:Credits = load(credits_path)
@@ -59,6 +66,11 @@ func clean_attributions() -> void:
 	for i in range(count - 1, -1, -1):
 		if not ResourceLoader.exists(credits.attributions[i].resource_id):
 			credits.attributions.remove_at(i)
+
+	count = credits.members.size()
+	for i in range(count - 1, -1, -1):
+		if not ResourceLoader.exists(credits.members[i].resource_id):
+			credits.members.remove_at(i)
 
 	ResourceSaver.save(credits)
 
@@ -71,7 +83,11 @@ func add_attributions(licenses:Array[LicenseBase]) -> void:
 	if not credits:
 		return
 
-	credits.attributions.append_array(licenses)
+	var external:Array[LicenseBase] = licenses.filter(func(l): return not l is LicenseProject)
+	var internal:Array[LicenseBase] = licenses.filter(func(l): return l is LicenseProject)
+
+	credits.attributions.append_array(external)
+	credits.members.append_array(internal)
 	ResourceSaver.save(credits)
 
 
@@ -93,7 +109,16 @@ func replace_attributions(licenses:Array[LicenseBase]) -> void:
 		if credits.attributions[i].resource_id in uids:
 			credits.attributions.remove_at(i)
 
-	credits.attributions.append_array(licenses)
+	count = credits.members.size()
+	for i in range(count - 1, -1, -1):
+		if credits.members[i].resource_id in uids:
+			credits.members.remove_at(i)
+
+	var external:Array[LicenseBase] = licenses.filter(func(l): return not l is LicenseProject)
+	var internal:Array[LicenseBase] = licenses.filter(func(l): return l is LicenseProject)
+
+	credits.attributions.append_array(external)
+	credits.members.append_array(internal)
 	ResourceSaver.save(credits)
 
 
@@ -105,6 +130,9 @@ func get_attributions(uid:String) -> Array[LicenseBase]:
 
 	var licenses:Array[LicenseBase] = []
 	for license in credits.attributions:
+		if license.resource_id == uid:
+			licenses.append(license)
+	for license in credits.members:
 		if license.resource_id == uid:
 			licenses.append(license)
 
