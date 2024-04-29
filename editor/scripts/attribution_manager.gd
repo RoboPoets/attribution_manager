@@ -88,6 +88,18 @@ func add_attributions(licenses:Array[LicenseBase]) -> void:
 
 	credits.attributions.append_array(external)
 	credits.members.append_array(internal)
+
+	for l:LicenseProject in internal:
+		for c in credits.credits:
+			if c.role != l.role:
+				continue
+			if not l.author in c.contributors:
+				var arr:Array[String]
+				arr.assign(c.contributors)
+				arr.append(l.author)
+				c.contributors = arr
+			break
+
 	ResourceSaver.save(credits)
 
 
@@ -119,6 +131,18 @@ func replace_attributions(licenses:Array[LicenseBase]) -> void:
 
 	credits.attributions.append_array(external)
 	credits.members.append_array(internal)
+
+	for l:LicenseProject in internal:
+		for c in credits.credits:
+			if c.role != l.role:
+				continue
+			if not l.author in c.contributors:
+				var arr:Array[String]
+				arr.assign(c.contributors)
+				arr.append(l.author)
+				c.contributors = arr
+			break
+
 	ResourceSaver.save(credits)
 
 
