@@ -6,7 +6,7 @@ const Settings = preload("../../settings.gd")
 
 
 func _enter_tree():
-	if OS.has_feature("editor"):
+	if Engine.is_editor_hint():
 		EditorInterface.get_file_system_dock().file_removed.connect(_on_file_removed)
 		EditorInterface.get_file_system_dock().folder_removed.connect(_on_folder_removed)
 
