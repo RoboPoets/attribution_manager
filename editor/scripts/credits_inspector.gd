@@ -18,7 +18,7 @@ func _can_handle(object:Object) -> bool:
 		return false
 
 	var uid := ResourceLoader.get_resource_uid(res.resource_path)
-	return uid != -1
+	return uid != ResourceUID.INVALID_ID
 
 
 func _parse_end(object:Object) -> void:
