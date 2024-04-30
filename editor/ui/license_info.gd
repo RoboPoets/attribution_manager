@@ -3,6 +3,7 @@ extends Control
 
 
 const LicenseItem = preload("./license_item.tscn")
+const LicenseItemOption = preload("./license_item_option.tscn")
 
 var _licenses:Array[Dictionary] = []
 
@@ -25,7 +26,7 @@ func _on_license_class_selected(index:int) -> void:
 	var selection = %ClassListButton.get_item_text(index)
 	for l in _get_licenses():
 		if l.class == selection:
-			_build_license_inspector(l.path)
+			_build_license_inspector(load(l.path).new())
 			break
 
 
@@ -68,22 +69,21 @@ func set_license(license:LicenseBase) -> void:
 			%ClassListButton.select(i)
 			break
 
+	_build_license_inspector(license)
+
+
+func _build_license_inspector(license:LicenseBase) -> void:
 	for prop in license.get_property_list():
 		if not _should_show_in_inspector(prop):
 			continue
-		var item = LicenseItem.instantiate()
+
+		var item:Control
+		match prop.name:
+			"role": item = LicenseItemOption.instantiate()
+			_:      item = LicenseItem.instantiate()
+
 		item.set_property(prop.name)
 		item.set_value(license.get(prop.name))
-		%Properties.add_child(item)
-
-
-func _build_license_inspector(class_path:String) -> void:
-	var license:LicenseBase = load(class_path).new()
-	for prop in license.get_property_list():
-		if not _should_show_in_inspector(prop):
-			continue
-		var item = LicenseItem.instantiate()
-		item.set_property(prop.name)
 		%Properties.add_child(item)
 
 

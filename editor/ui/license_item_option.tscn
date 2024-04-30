@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://ly2hg5qa2yok"]
+
+[ext_resource type="Script" path="res://addons/attribution_manager/editor/ui/license_item_option.gd" id="1_wmula"]
+
+[node name="LicenseItemOption" type="HBoxContainer"]
+offset_right = 72.0
+offset_bottom = 31.0
+script = ExtResource("1_wmula")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Attribute"
+
+[node name="Options" type="OptionButton" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
