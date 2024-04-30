@@ -45,6 +45,11 @@ added to the main credits array into the associated `Role` list.
 
 > **Note:** When you remove an asset or an attribution from an asset, the project member
 > is not automatically removed from the credits list. You will have to do that manually.
-> Whether or not you *should* is up to you. When in doubt, refer to the 
+> Whether or not you *should* is up to you. When in doubt, refer to the
 > [IDGA Crediting Guide](https://igda.org/wp-content/uploads/2021/11/IGDA-Game-Crediting-Guidelines-10.1-March-2023.pdf)
 > for some considerations on good business practices.
+
+The list of roles that are available when using the `LicenseProject` attribution is created
+from the roles that make up the `Credits` section in the credits resource. So in order to
+attribute an asset to someone in a specific role, the role has to be set up in that resource
+first.
