@@ -5,32 +5,6 @@ extends Node
 const Settings = preload("../../settings.gd")
 
 
-func _enter_tree():
-	if Engine.is_editor_hint():
-		EditorInterface.get_file_system_dock().file_removed.connect(_on_file_removed)
-		EditorInterface.get_file_system_dock().folder_removed.connect(_on_folder_removed)
-
-
-# Handle the removal of all attributions from the credits resource that match
-# the uid of the recently deleted file. Files of internal resources are ignored
-# here.
-func _on_file_removed(file:String) -> void:
-	var uid_num := ResourceLoader.get_resource_uid(file)
-	if uid_num == ResourceUID.INVALID_ID:
-		return
-
-	var uid_str := ResourceUID.id_to_text(uid_num)
-	remove_attributions([uid_str])
-
-
-# Handle the removal of all attributions from the credits resource that match
-# the uids of all files in the recently deleted folder.
-func _on_folder_removed(folder:String) -> void:
-	# We don't get a list of individual files, so we have to
-	# clean up the credits resource from start to finish.
-	clean_attributions()
-
-
 # Remove all attributions from the credits resource that match the
 # provided resource uids. Attributions to project members are removed,
 # but their mention in the Credits section remains.
